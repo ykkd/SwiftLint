@@ -100,7 +100,7 @@ struct UnusedImportRule: CorrectableRule, ConfigurationProviderRule, AnalyzerRul
 
 private extension SwiftLintFile {
     func getImportUsage(compilerArguments: [String], configuration: UnusedImportConfiguration) -> [ImportUsage] {
-        queuedPrintError("debugprint get import usage \(compilerArguments) \(configuration.specifyImportsToRun)")
+        queuedPrintError("debugprint get import usage! \(compilerArguments) \(configuration.specifyImportsToRun)")
         var (imports, usrFragments) = getImportsAndUSRFragments(compilerArguments: compilerArguments)
 
         // Always disallow 'Swift' and 'SwiftShims' because they're always available without importing.
