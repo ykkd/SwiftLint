@@ -5,7 +5,7 @@ private let moduleToLog = ProcessInfo.processInfo.environment["SWIFTLINT_LOG_MOD
 
 struct UnusedImportRule: CorrectableRule, ConfigurationProviderRule, AnalyzerRule {
     var configuration = UnusedImportConfiguration(severity: .warning, requireExplicitImports: false,
-                                                  allowedTransitiveImports: [], alwaysKeepImports: [])
+                                                  allowedTransitiveImports: [], alwaysKeepImports: [], specifyImportsToRun: [])
 
     init() {}
 
@@ -100,6 +100,7 @@ struct UnusedImportRule: CorrectableRule, ConfigurationProviderRule, AnalyzerRul
 
 private extension SwiftLintFile {
     func getImportUsage(compilerArguments: [String], configuration: UnusedImportConfiguration) -> [ImportUsage] {
+        queuedPrintError("debugprint get import usage \(compilerArguments) \(configuration.specifyImportsToRun)")
         var (imports, usrFragments) = getImportsAndUSRFragments(compilerArguments: compilerArguments)
 
         // Always disallow 'Swift' and 'SwiftShims' because they're always available without importing.
@@ -113,6 +114,12 @@ private extension SwiftLintFile {
         // Certain Swift attributes requires importing Foundation.
         if unusedImports.contains("Foundation") && containsAttributesRequiringFoundation() {
             unusedImports.remove("Foundation")
+        }
+
+        print("debugprint Set(configuration.specifyImportsToRun)\(Set(configuration.specifyImportsToRun))")
+        print("debugprint specifyImportsToRun\(configuration.specifyImportsToRun)")
+        if !configuration.specifyImportsToRun.isEmpty {
+            unusedImports = Set(configuration.specifyImportsToRun)
         }
 
         if unusedImports.isNotEmpty {
